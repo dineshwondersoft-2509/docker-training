@@ -1,0 +1,45 @@
+services:
+
+  db:
+    image: postgres:16
+
+    environment:
+      POSTGRES_DB: trainingdb
+      POSTGRES_USER: traininguser
+      POSTGRES_PASSWORD: trainingpass
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  api:
+    build:
+      context: ./api
+
+    environment:
+      DB_HOST: db
+      DB_NAME: trainingdb
+      DB_USER: traininguser
+      DB_PASSWORD: trainingpass
+
+    expose:
+      - "5000"
+
+    depends_on:
+      - db
+
+
+  frontend:
+    build:
+      context: ./frontend
+
+    ports:
+      - "8080:80"
+
+    depends_on:
+      - api
+
+
+volumes:
+
+  postgres_data:
